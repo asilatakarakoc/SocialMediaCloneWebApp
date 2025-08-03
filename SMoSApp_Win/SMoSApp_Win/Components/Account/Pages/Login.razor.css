@@ -1,22 +1,28 @@
-﻿::deep body {
-    margin: 0;
-    padding: 0;
-    display: flex;
+﻿body {
+    align-content: center;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    font-family: 'Domine', serif; /* Changed font */
-    background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e);
 }
 
-
-::deep .row {
+.row {
     justify-content: center;
+    align-content: center;
+    align-items: center;
 }
 
+.login-page-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 2rem;
+    padding: 2rem;
+    flex-wrap: wrap;
+}
 
-.col-md-4 section {
+.login-card {
+    align-self: center;
     background-color: rgba(10, 10, 30, 0.6);
+    justify-content: center;
     padding: 2rem;
     border-radius: 15px;
     box-shadow: 0 15px 35px rgba(0,0,0,0.5);
@@ -24,6 +30,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    width: 40%;
 }
 
 h1, h2, h3 {
@@ -31,51 +38,29 @@ h1, h2, h3 {
     text-align: center;
 }
 
-hr {
-    border-color: rgba(255, 255, 255, 0.2);
-    width: 100%; /* Make hr take full width of the flex container */
+
+
+.checkbox label {
+    color: #fff;
 }
 
-/* Style the floating labels and inputs to be centered like the example */
 .form-floating {
-    width: 80%; /* Using 80% for a better look on the card */
+    margin: 2rem;
 }
 
-    .form-floating > .form-control {
-        background-color: #1c1c3c; /* Darker blue for inputs */
-        color: #fff;
-        border: 1px solid #4a4a8a;
-        border-radius: 5px; /* Added from the example */
-    }
-
-        .form-floating > .form-control:focus {
-            background-color: #1c1c3c;
-            color: #fff;
-            box-shadow: 0 0 15px #573b8a;
-            border-color: #573b8a;
-        }
-
-    .form-floating > label {
-        color: #aaa;
-    }
-
-/* Style the "Remember me" checkbox and label */
-.checkbox {
-    width: 80%; /* Align with the inputs */
+::deep .login-input {
+    border: 1px solid #6c757d; /* A custom border color */
+    border-radius: 10px;
+    padding: 10px;
+    width: 100%;
+    font-family: "Domine", serif;
+    box-sizing: border-box; /* Ensures padding doesn't affect width */
 }
 
-    .checkbox label {
-        color: #fff;
-    }
-
-.form-check-input {
-    background-color: #1c1c3c;
-    border-color: #4a4a8a;
-}
-
-    .form-check-input:checked {
-        background-color: #573b8a;
-        border-color: #573b8a;
+    ::deep .login-input:focus {
+        border-color: #80bdff;
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
     }
 
 
@@ -84,7 +69,7 @@ hr {
     border: none;
     font-weight: bold;
     transition: .2s ease-in;
-    width: 80% !important; 
+    width: 80% !important;
     display: block;
 }
 
@@ -93,18 +78,16 @@ hr {
         box-shadow: 0 0 15px #6d44b8;
     }
 
-div > p {
-    text-align: center;
+
+
+div > p > a {
+    color: #a790d3;
+    text-decoration: none;
 }
 
-    div > p > a {
-        color: #a790d3;
-        text-decoration: none;
+    div > p > a:hover {
+        color: #fff;
     }
-
-        div > p > a:hover {
-            color: #fff;
-        }
 
 .text-danger {
     color: #ff7b7b !important;
