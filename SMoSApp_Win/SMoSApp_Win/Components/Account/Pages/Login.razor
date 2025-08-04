@@ -10,7 +10,7 @@
 @inject NavigationManager NavigationManager
 @inject IdentityRedirectManager RedirectManager
 
-<PageTitle>Log in</PageTitle>
+<PageTitle>Twitter</PageTitle>
 
 
 
@@ -20,7 +20,7 @@
         <EditForm Model="Input" method="post" OnValidSubmit="LoginUser" FormName="login">
             <DataAnnotationsValidator />
             <ValidationSummary class="text-danger" role="alert" />
-            <h1 id="login-style">Log in</h1>
+            <h1 id="login-style">Welcome back.</h1>
             <div class="form-floating mb-3">
                 <InputText @bind-Value="Input.Email" class="login-input" autocomplete="username" aria-required="true" placeholder="Your mail." />
                 <ValidationMessage For="() => Input.Email" class="text-danger" />
@@ -29,22 +29,21 @@
                 <InputText type="password" @bind-Value="Input.Password" class="login-input" autocomplete="current-password" aria-required="true" placeholder="Your password." />
                 <ValidationMessage For="() => Input.Password" class="text-danger" />
             </div>
-            <div class="checkbox mb-3">
-                <label class="form-label">
-                    <InputCheckbox @bind-Value="Input.RememberMe" class="darker-border-checkbox form-check-input" />
-                    Remember me
-                </label>
-            </div>
+            
             <div>
-                <button type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
+                <button type="submit" class="w-100 btn btn-lg btn-primary">log in</button>
+            </div>
+
+            <div>
+                <a href="Account/Register" class="w-100 btn btn-lg btn-primary signup-button">sign up</a>
             </div>
             <div>
                 <p>
                     <a href="Account/ForgotPassword">Forgot your password?</a>
                 </p>
-                <p>
-                    <a href="@(NavigationManager.GetUriWithQueryParameters("Account/Register", new Dictionary<string, object?> { ["ReturnUrl"] = ReturnUrl }))">Register as a new user</a>
-                </p>
+                
+                
+                
                 <p>
                     <a href="Account/ResendEmailConfirmation">Resend email confirmation</a>
                 </p>
@@ -52,6 +51,7 @@
         </EditForm>
     </section>
 </div>
+<!-- this is for signing up with Google (gmail)
 <div class="col-md-6 col-md-offset-2">
     <section>
         <h3>Use another service to log in.</h3>
@@ -59,6 +59,7 @@
         <ExternalLoginPicker />
     </section>
 </div>
+-->
 
 
 @code {
@@ -82,11 +83,15 @@
         }
     }
 
+    private void NavigateToSignup()
+    {
+        NavigationManager.NavigateTo("Account/Register");
+    }
     public async Task LoginUser()
     {
         // This doesn't count login failures towards account lockout
         // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-        var result = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+        var result = await SignInManager.PasswordSignInAsync(Input.Email, Input.Password,false, lockoutOnFailure: false);
         if (result.Succeeded)
         {
             Logger.LogInformation("User logged in.");
@@ -96,7 +101,7 @@
         {
             RedirectManager.RedirectTo(
                 "Account/LoginWith2fa",
-                new() { ["returnUrl"] = ReturnUrl, ["rememberMe"] = Input.RememberMe });
+                new() { ["returnUrl"] = ReturnUrl });
         }
         else if (result.IsLockedOut)
         {
@@ -119,7 +124,6 @@
         [DataType(DataType.Password)]
         public string Password { get; set; } = "";
 
-        [Display(Name = "Remember me?")]
-        public bool RememberMe { get; set; }
+        public bool RememberMe { get; set; } = false;
     }
 }

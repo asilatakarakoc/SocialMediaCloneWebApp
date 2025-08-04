@@ -64,20 +64,47 @@ h1, h2, h3 {
     }
 
 
-.btn-primary {
+.btn-primary{
     background-color: #573b8a;
     border: none;
+    margin-right: auto;
+    margin-left: auto;
     font-weight: bold;
+    color: #eee;
+    border-radius: 1rem;
     transition: .2s ease-in;
-    width: 80% !important;
+    width: 75% !important;
+    min-height: 2rem;
     display: block;
 }
 
     .btn-primary:hover {
         background-color: #6d44b8;
         box-shadow: 0 0 15px #6d44b8;
+        cursor: pointer;
     }
 
+.signup-button {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    color: #fff !important;
+    text-decoration: none !important;
+    font-style: normal;
+    font-family: "Domine", serif;
+    font-size:small;
+    margin-top: 1rem;
+    background-color: transparent !important;
+    border: 1px solid #fff !important;
+}
+
+    .signup-button:hover {
+        background-color: #fff !important;
+        color: #573b8a !important;
+        box-shadow: none !important;
+        cursor: pointer;
+    }
 
 
 div > p > a {
@@ -92,3 +119,4 @@ div > p > a {
 .text-danger {
     color: #ff7b7b !important;
 }
+
