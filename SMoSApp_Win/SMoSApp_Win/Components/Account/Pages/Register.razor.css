@@ -1,0 +1,123 @@
+﻿body {
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+}
+
+.row {
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+}
+
+.login-page-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 2rem;
+    padding: 2rem;
+    flex-wrap: wrap;
+}
+
+.login-card {
+    align-self: center;
+    background-color: rgba(10, 10, 30, 0.6);
+    justify-content: center;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    flex-direction: column;
+    align-items: center;
+    width: 40%;
+}
+
+h1, h2, h3 {
+    color: #fff;
+    text-align: center;
+}
+
+
+
+.checkbox label {
+    color: #fff;
+}
+
+.form-floating {
+    margin: 2rem;
+}
+
+::deep .login-input {
+    border: 1px solid #6c757d; /* A custom border color */
+    border-radius: 10px;
+    padding: 10px;
+    width: 100%;
+    font-family: "Domine", serif;
+    box-sizing: border-box; /* Ensures padding doesn't affect width */
+}
+
+    ::deep .login-input:focus {
+        border-color: #80bdff;
+        outline: 0;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    }
+
+
+.btn-primary {
+    background-color: #573b8a;
+    border: none;
+    margin-right: auto;
+    margin-left: auto;
+    font-weight: bold;
+    color: #eee;
+    border-radius: 1rem;
+    transition: .2s ease-in;
+    width: 75% !important;
+    min-height: 2rem;
+    display: block;
+}
+
+    .btn-primary:hover {
+        background-color: #6d44b8;
+        box-shadow: 0 0 15px #6d44b8;
+        cursor: pointer;
+    }
+
+.signup-button {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    color: #fff !important;
+    text-decoration: none !important;
+    font-style: normal;
+    font-family: "Domine", serif;
+    font-size: small;
+    margin-top: 1rem;
+    background-color: transparent !important;
+    border: 1px solid #fff !important;
+}
+
+    .signup-button:hover {
+        background-color: #fff !important;
+        color: #573b8a !important;
+        box-shadow: none !important;
+        cursor: pointer;
+    }
+
+
+div > p > a {
+    color: #a790d3;
+    text-decoration: none;
+}
+
+    div > p > a:hover {
+        color: #fff;
+    }
+
+.text-danger {
+    color: #ff7b7b !important;
+}
