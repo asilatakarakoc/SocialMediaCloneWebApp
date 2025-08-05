@@ -10,7 +10,7 @@
     align-items: center;
 }
 
-.login-page-container {
+.set-profile-container {
     display: flex;
     justify-content: center;
     align-items: flex-start;
@@ -19,7 +19,9 @@
     flex-wrap: wrap;
 }
 
-.login-card {
+.setprofile-card {
+    margin-left: auto;
+    margin-right: auto;
     align-self: center;
     background-color: rgba(10, 10, 30, 0.6);
     justify-content: center;
@@ -28,8 +30,6 @@
     box-shadow: 0 15px 35px rgba(0,0,0,0.5);
     border: 1px solid rgba(255, 255, 255, 0.1);
     display: flex;
-    margin-left: auto;
-    margin-right: auto;
     flex-direction: column;
     align-items: center;
     width: 40%;
@@ -72,7 +72,6 @@ h1, h2, h3 {
     margin-right: auto;
     margin-left: auto;
     font-weight: bold;
-    font-family: "Domine", serif;
     color: #eee;
     border-radius: 1rem;
     transition: .2s ease-in;
@@ -121,4 +120,57 @@ div > p > a {
 
 .text-danger {
     color: #ff7b7b !important;
+}
+
+::deep .form-control {
+    font-family: "Domine", serif;
+    border-radius: 1rem;
+    background-color: #573b8a;
+    color: #eee;
+    min-height: 2rem;
+    justify-content: center;
+    margin : 1rem;
+    padding-inline: 0.5rem;
+    
+}
+
+    ::deep .form-control::placeholder {
+        color: #ccc; /* A lighter color for the placeholder text */
+        opacity: 0.9; /* Ensures consistent color across browsers */
+    }
+
+.row-content{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+}
+
+::deep .add-img-button {
+    margin-left: 2rem;
+    border-radius: 50%;
+    width: 7rem; 
+    height: 7rem; 
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    background: 
+        linear-gradient(to right, white, white) center / 50% 4px no-repeat, 
+        linear-gradient(to bottom, white, white) center / 4px 50% no-repeat,
+        #573b8a; /* purple background */
+    content-visibility: hidden;
+    border: 1px solid #6d44b8;
+    cursor: pointer;
+}
+
+::deep .profile-picture-container{
+    min-height: 10rem;
+    min-width: 10rem;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    align-content: center;
+    display: flex; 
 }

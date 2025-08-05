@@ -6,6 +6,7 @@
 @using SMoSApp_Win.Data
 
 @inject UserManager<ApplicationUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
 @inject IdentityRedirectManager RedirectManager
 
 <PageTitle>Confirm email</PageTitle>
@@ -30,19 +31,45 @@
         if (UserId is null || Code is null)
         {
             RedirectManager.RedirectTo("");
+            return;
         }
 
-        var user = await UserManager.FindByIdAsync(UserId);
+        // Enhanced retry mechanism with longer delays and more attempts
+        ApplicationUser? user = null;
+        for (var i = 0; i < 5; i++) // Increased retries
+        {
+            user = await UserManager.FindByIdAsync(UserId);
+            if (user is not null)
+            {
+                break;
+            }
+            await Task.Delay(1000); // Wait a full second between retries
+        }
+
         if (user is null)
         {
             HttpContext.Response.StatusCode = StatusCodes.Status404NotFound;
-            statusMessage = $"Error loading user with ID {UserId}";
+            statusMessage = $"Error loading user with ID {UserId}. Please try again or contact support.";
+            return;
+        }
+
+        var code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(Code));
+        var result = await UserManager.ConfirmEmailAsync(user, code);
+
+        if (result.Succeeded)
+        {
+            // Ensure the user is signed in after email confirmation
+            await SignInManager.SignInAsync(user, isPersistent: false);
+
+            statusMessage = "Thank you for confirming your email. Redirecting to profile setup...";
+            await Task.Delay(2000); // Give time to read the message
+            RedirectManager.RedirectTo("Account/SetProfile");
         }
         else
         {
-            var code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(Code));
-            var result = await UserManager.ConfirmEmailAsync(user, code);
-            statusMessage = result.Succeeded ? "Thank you for confirming your email." : "Error confirming your email.";
+            statusMessage = "Error confirming your email.";
+            await Task.Delay(2000);
+            RedirectManager.RedirectTo("Account/Login");
         }
     }
 }

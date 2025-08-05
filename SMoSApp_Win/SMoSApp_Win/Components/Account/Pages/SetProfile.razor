@@ -1,0 +1,161 @@
+﻿@page "/Account/SetProfile"
+@using System.ComponentModel.DataAnnotations
+@using System.Security.Claims
+@using System.Text
+@using System.Text.Encodings.Web
+@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.WebUtilities
+@using SMoSApp_Win.Data
+
+@inject ILogger<SetProfile> Logger
+@inject UserManager<ApplicationUser> UserManager
+@inject IdentityUserAccessor UserAccessor
+@inject IWebHostEnvironment WebHostEnvironment
+@inject NavigationManager NavigationManager
+@inject IdentityRedirectManager RedirectManager
+
+<PageTitle>Set Up Your Profile</PageTitle>
+
+<StatusMessage Message="@message" />
+
+<div class="setprofile-card">
+    <div class="set-profile-container">
+        <EditForm Model="Input" OnValidSubmit="OnValidSubmitAsync" FormName="set-profile" enctype="multipart/form-data">
+            <DataAnnotationsValidator />
+            <h3>Set Up Your Profile</h3>
+            <hr />
+            <ValidationSummary class="text-danger" role="alert" />
+
+
+
+            <div class="form-floating mb-3">
+                <div class="profile-picture-container">
+                    <label>Profile Picture</label>
+                    @if (!string.IsNullOrEmpty(profilePicturePreview))
+                    {
+                        <img class="profile-picture-preview" src="@profilePicturePreview" />
+                    }
+                    <InputFile OnChange="OnProfilePictureSelected" class="add-img-button" />
+                </div>
+                <div class="row-content">
+                    <label class="form-label">Display Name</label>
+                    <InputText @bind-Value="Input.DisplayName" class="form-control" placeholder="Enter your display name" />
+                </div>
+                <ValidationMessage For="() => Input.DisplayName" class="text-danger" />
+            </div>
+
+            <div class="form-floating mb-3">
+                <div class="row-content">
+                    <label class="form-label">Bio</label>
+                    <InputTextArea @bind-Value="Input.Bio" class="form-control" placeholder="Tell us about yourself" style="height: 100px" />
+                </div>
+                <ValidationMessage For="() => Input.Bio" class="text-danger" />
+            </div>
+
+            <button type="submit" class="w-100 btn btn-lg btn-primary">Save Profile</button>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    private ApplicationUser user = default!;
+    private string? message;
+    private string? profilePicturePreview;
+
+    [CascadingParameter]
+    private HttpContext HttpContext { get; set; } = default!;
+
+    [SupplyParameterFromForm]
+    private InputModel Input { get; set; } = new();
+
+    // Add this injection to get the factory for creating user principals.
+    [Inject]
+    private IUserClaimsPrincipalFactory<ApplicationUser> UserClaimsPrincipalFactory { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        user = await UserAccessor.GetRequiredUserAsync(HttpContext);
+
+        if (HttpContext.Request.Method == "GET")
+        {
+            Input.DisplayName = user.DisplayName;
+            Input.Bio = user.Bio;
+        }
+
+        profilePicturePreview = user.ProfilePictureUrl;
+    }
+
+    private async Task OnProfilePictureSelected(InputFileChangeEventArgs e)
+    {
+        Input.ProfilePicture = e.File;
+        if (Input.ProfilePicture is not null)
+        {
+            var buffer = new byte[Input.ProfilePicture.Size];
+            await Input.ProfilePicture.OpenReadStream(maxAllowedSize: 5 * 1024 * 1024).ReadAsync(buffer); // 5MB limit
+            profilePicturePreview = $"data:image/png;base64,{Convert.ToBase64String(buffer)}";
+        }
+    }
+
+    private async Task OnValidSubmitAsync()
+    {
+        // Fetch a fresh, tracked instance of the user right before updating.
+        Logger.LogInformation("OnValidSubmit triggered. Is ProfilePicture null? {is_null}", Input.ProfilePicture is null);
+        var userToUpdate = await UserManager.FindByIdAsync(user.Id);
+        if (userToUpdate is null)
+        {
+            message = $"Error: Unable to load user with ID '{user.Id}'.";
+            return;
+        }
+
+        // Handle the file upload if a new picture was provided
+        if (Input.ProfilePicture is not null)
+        {
+            var uploadsFolder = Path.Combine(WebHostEnvironment.WebRootPath, "uploads", "avatars");
+            if (!Directory.Exists(uploadsFolder))
+            {
+                Directory.CreateDirectory(uploadsFolder);
+            }
+
+            var uniqueFileName = $"{Guid.NewGuid()}_{Input.ProfilePicture.Name}";
+            var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+            await using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                await Input.ProfilePicture.OpenReadStream(maxAllowedSize: 5 * 1024 * 1024).CopyToAsync(fileStream);
+            }
+            userToUpdate.ProfilePictureUrl = $"/uploads/avatars/{uniqueFileName}";
+        }
+
+        // Apply the other changes from the form to the tracked user object
+        userToUpdate.DisplayName = Input.DisplayName;
+        userToUpdate.Bio = Input.Bio;
+
+        // Save the tracked user object that now contains all changes
+        var result = await UserManager.UpdateAsync(userToUpdate);
+        if (!result.Succeeded)
+        {
+            message = $"Error: {string.Join(", ", result.Errors.Select(e => e.Description))}";
+            return;
+        }
+
+        message = "Your profile has been updated.";
+
+
+        var principal = await UserClaimsPrincipalFactory.CreateAsync(userToUpdate);
+        await HttpContext.SignInAsync(IdentityConstants.ApplicationScheme, principal);
+
+        RedirectManager.RedirectTo("/");
+    }
+
+    private sealed class InputModel
+    {
+        [StringLength(100, ErrorMessage = "Display Name cannot be longer than 100 characters.")]
+        public string? DisplayName { get; set; }
+
+        [StringLength(300, ErrorMessage = "Bio cannot be longer than 300 characters.")]
+        public string? Bio { get; set; }
+
+        public IBrowserFile? ProfilePicture { get; set; }
+    }
+}
