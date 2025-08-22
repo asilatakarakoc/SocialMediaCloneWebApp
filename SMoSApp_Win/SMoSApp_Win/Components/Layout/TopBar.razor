@@ -1,44 +1,28 @@
 ﻿@inject NavigationManager NavigationManager
 
 <nav class="topBar">
-    @if (!IsLoginPage())
-    {
-        <div class="profileBar">
-            <button class="profile-button"><img src="profile-circle.svg" /></button>
-            <button class="notification-button"><img src="notification-logo.svg" /></button>
-        </div>
-    }
+    <AuthorizeView>
+        <Authorized>
+            <div class="profileBar">
+                <a href="/Account/ProfilePage" class="profile-button"><img src="profile-circle.svg" /></a>
+                <button class="notification-button"><img src="notification-logo.svg" /></button>
+            </div>
+        </Authorized>
+    </AuthorizeView>
     <div class="text-logo">
         <button>twitter</button>
     </div>
-    @if (!IsLoginPage())
-    {
-        <div class="searchbar">
-            <input type="text" class="searchbar-input" />
-            <button class="search-button"><img class="search-logo" src="search-logo.svg" /></button>
-        </div>
-    }
+    <AuthorizeView>
+        <Authorized>
+            <div class="searchbar">
+                <input type="text" class="searchbar-input" />
+                <button class="search-button"><img class="search-logo" src="search-logo.svg" /></button>
+            </div>
+        </Authorized>
+    </AuthorizeView>
 </nav>
 
+
 @code {
-    protected override void OnInitialized()
-    {
-        NavigationManager.LocationChanged += HandleLocationChanged;
-    }
-
-    private bool IsLoginPage()
-    {
-        var relativePath = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
-        return relativePath.StartsWith("Account", StringComparison.OrdinalIgnoreCase);
-    }
-
-    private void HandleLocationChanged(object? sender, LocationChangedEventArgs e)
-    {
-        StateHasChanged();
-    }
-
-    public void Dispose()
-    {
-        NavigationManager.LocationChanged -= HandleLocationChanged;
-    }
+    
 }
